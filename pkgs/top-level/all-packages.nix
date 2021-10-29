@@ -10593,6 +10593,8 @@ with pkgs;
 
   unrar = callPackage ../tools/archivers/unrar { };
 
+  vignette = callPackage ../applications/video/vignette { };
+
   vul = callPackage ../applications/misc/vul { };
 
   xar = callPackage ../tools/compression/xar { };
