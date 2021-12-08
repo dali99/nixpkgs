@@ -308,6 +308,7 @@ in
         inherit user;
         group = webserver.group;
 
+        phpPackage = pkgs.php74;
         phpEnv = {
           DOKUWIKI_LOCAL_CONFIG = "${dokuwikiLocalConfig hostName cfg}";
           DOKUWIKI_PLUGINS_LOCAL_CONFIG = "${dokuwikiPluginsLocalConfig hostName cfg}";
@@ -446,5 +447,6 @@ in
   meta.maintainers = with maintainers; [
     _1000101
     onny
+    dandellion
   ];
 }
