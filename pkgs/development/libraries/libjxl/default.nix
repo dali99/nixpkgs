@@ -52,7 +52,7 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [
     asciidoc # for docs
     cmake
-    graphviz # for docs via doxygen component `dot`
+    # graphviz # for docs via doxygen component `dot`
     doxygen # for docs
     gtest
     pkg-config
