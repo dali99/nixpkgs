@@ -21,13 +21,13 @@ in
 with lib;
 stdenv.mkDerivation rec {
   pname = "libwebp";
-  version = "1.2.1";
+  version = "1.2.2";
 
   src = fetchFromGitHub {
     owner  = "webmproject";
     repo   = pname;
     rev    = "v${version}";
-    hash   = "sha256-KrvB5d3KNmujbfekWaevz2JZrWtK3PjEG9NEzRBYIDw=";
+    hash   = "sha256-WF2HZPS7mbotk+d1oLM/JC5l/FWfkrk+T3Z6EW9oYEI=";
   };
 
   prePatch = "patchShebangs .";
