@@ -10,7 +10,7 @@
 , swap16bitcspSupport ? false # Byte swap for 16bit color spaces
 , experimentalSupport ? false # Experimental code
 , libwebpmuxSupport ? true # Build libwebpmux
-, libwebpdemuxSupport ? true # Build libwebpdemux
+, libwebpdemuxSupport ? false # Build libwebpdemux
 , libwebpdecoderSupport ? true # Build libwebpdecoder
 }:
 

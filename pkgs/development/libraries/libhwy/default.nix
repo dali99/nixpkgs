@@ -35,7 +35,7 @@ stdenv.mkDerivation rec {
   ] ++ lib.optional doCheck "-DHWY_SYSTEM_GTEST:BOOL=ON";
 
   # hydra's darwin machines run into https://github.com/libjxl/libjxl/issues/408
-  doCheck = !stdenv.hostPlatform.isDarwin;
+  doCheck = !stdenv.hostPlatform.isDarwin && !stdenv.hostPlatform.isStatic;
 
   meta = with lib; {
     description = "Performance-portable, length-agnostic SIMD with runtime dispatch";
