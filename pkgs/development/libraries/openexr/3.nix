@@ -27,6 +27,8 @@ stdenv.mkDerivation rec {
     done
   '';
 
+  cmakeFlags = lib.optional stdenv.hostPlatform.isStatic "-DCMAKE_SKIP_RPATH=ON";
+
   nativeBuildInputs = [ cmake ];
   propagatedBuildInputs = [ imath zlib ];
 
