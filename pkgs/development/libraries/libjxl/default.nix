@@ -78,14 +78,13 @@ stdenv.mkDerivation rec {
   buildInputs = [
     brotli
     giflib
-    gperftools # provides `libtcmalloc`
     libhwy
     libjpeg
     libpng
     libwebp
     openexr
     zlib
-  ];
+  ] ++ lib.optional (!stdenv.hostPlatform.isStatic) gperftools; # provides `libtcmalloc`
 
   cmakeFlags = [
     # For C dependencies like brotli, which are dynamically linked,
@@ -107,6 +106,8 @@ stdenv.mkDerivation rec {
     # * the `gdk-pixbuf` one, which allows applications like `eog` to load jpeg-xl files
     # * the `gimp` one, which allows GIMP to load jpeg-xl files
     # "-DJPEGXL_ENABLE_PLUGINS=ON"
+  ] ++ lib.optionals stdenv.hostPlatform.isStatic [
+   "-DJPEGXL_STATIC=ON"
   ];
 
   LDFLAGS = lib.optionalString stdenv.hostPlatform.isRiscV "-latomic";
