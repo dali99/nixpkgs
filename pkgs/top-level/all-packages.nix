@@ -24805,6 +24805,8 @@ with pkgs;
 
   rdkafka = callPackage ../development/libraries/rdkafka { };
 
+  ldf-server = callPackage ../servers/ldf-server { nodejs = nodejs-16_x; };
+
   leafnode = callPackage ../servers/news/leafnode { };
 
   lemmy-server = callPackage ../servers/web-apps/lemmy/server.nix {
