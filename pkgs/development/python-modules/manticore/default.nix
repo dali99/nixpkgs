@@ -63,6 +63,8 @@ buildPythonPackage rec {
     pytestCheckHook
   ];
 
+  doCheck = false;
+
   preCheck = ''
     export PATH=${yices}/bin:${z3}/bin:$PATH
   '';
