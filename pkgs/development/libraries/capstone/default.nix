@@ -7,13 +7,13 @@
 
 stdenv.mkDerivation rec {
   pname = "capstone";
-  version = "4.0.2";
+  version = "5.0-rc2";
 
   src = fetchFromGitHub {
     owner = "aquynh";
     repo = "capstone";
     rev = version;
-    sha256 = "sha256-XMwQ7UaPC8YYu4yxsE4bbR3leYPfBHu5iixSLz05r3g=";
+    sha256 = "sha256-nB7FcgisBa8rRDS3k31BbkYB+tdqA6Qyj9hqCnFW+ME=";
   };
 
   # replace faulty macos detection
