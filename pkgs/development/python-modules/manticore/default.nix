@@ -6,7 +6,7 @@
 , intervaltree
 , ply
 , prettytable
-, protobuf
+, protobuf3
 , pyelftools
 , pyevmasm
 , pysha3
@@ -23,7 +23,7 @@
 
 buildPythonPackage rec {
   pname = "manticore";
-  version = "0.3.7";
+  version = "unstable-2023-02-17";
   format = "setuptools";
 
   disabled = pythonOlder "3.7";
@@ -31,8 +31,8 @@ buildPythonPackage rec {
   src = fetchFromGitHub {
     owner = "trailofbits";
     repo = "manticore";
-    rev = version;
-    hash = "sha256-+17VBfAtkZZIi3SF5Num1Uqg3WjIpgbz3Jx65rD5zkM=";
+    rev = "2425d3114ebebfdbf88bd736e8d6037353a367b8";
+    hash = "sha256-i0fo9i509GeDF29nAZX54WwbkoA/RYJewz5tGIaOgK4=";
   };
 
   propagatedBuildInputs = [
@@ -40,7 +40,7 @@ buildPythonPackage rec {
     intervaltree
     ply
     prettytable
-    protobuf
+    protobuf3
     pyevmasm
     pysha3
     pyyaml
