@@ -5,7 +5,7 @@ let
   inherit (builtins) head tail length;
   inherit (lib.trivial) id mergeAttrs;
   inherit (lib.strings) concatStringsSep concatMapStringsSep escapeNixIdentifier sanitizeDerivationName;
-  inherit (lib.lists) foldr foldl' concatMap concatLists elemAt all partition groupBy take foldl;
+  inherit (lib.lists) foldr foldl' concatMap concatLists elemAt all partition groupBy take foldl imap0;
 in
 
 rec {
@@ -521,6 +521,21 @@ rec {
     # Attribute set to map over.
     set:
     listToAttrs (map (attr: f attr set.${attr}) (attrNames set));
+
+
+  /* Like mapAttrs, but additionally taking a variable that
+     will be automatically incremented, starting from 0.
+
+     Example:
+       imapAttrs (i: name: value: value + i)
+          { a = 1; b = 1; c = 1; }
+       => { a = 1; b = 2; c = 3; }
+
+     Type:
+       imapAttrs :: (Int -> String -> a -> b) -> { ... :: a } -> { ... :: b }
+  */
+  imapAttrs = f: set:
+    listToAttrs (imap0 (i: attr: nameValuePair attr (f i attr set.${attr})) (attrNames set));
 
 
   /* Call a function for each attribute in the given set and return

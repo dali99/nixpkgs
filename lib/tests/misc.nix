@@ -785,6 +785,10 @@ runTests {
     };
   };
 
+  testImapAttrs = {
+    expr = attrsets.imapAttrs (i: name: value: value + i) {a = 1; b = 2; c = 3;};
+    expected = { a = 1; b = 3; c = 5; };
+  };
 
   testMergeAttrsListExample1 = {
     expr = attrsets.mergeAttrsList [ { a = 0; b = 1; } { c = 2; d = 3; } ];
