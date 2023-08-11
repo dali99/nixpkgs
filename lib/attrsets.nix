@@ -538,6 +538,21 @@ rec {
     listToAttrs (imap0 (i: attr: nameValuePair attr (f i attr set.${attr})) (attrNames set));
 
 
+  /* Like mapAttrs', but additionally taking a variable that
+     will be automatically incremented, starting from 0.
+
+     Example:
+       imapAttrs' (i: name: value: nameValuePair "${name}${toString i}" (value + i))
+          { a = 2; b = 3; }
+       => { a0 = 2; b1 = 4 }
+
+     Type:
+       imapAttrs' :: (Int -> String -> { ... :: a } -> {name :: String; value:: b}) -> { ... :: a } -> { ... :: b}
+  */
+  imapAttrs' = f: set:
+    listToAttrs (imap0 (i: attr: f i attr set.${attr}) (attrNames set));
+
+
   /* Call a function for each attribute in the given set and return
      the result in a list.
 

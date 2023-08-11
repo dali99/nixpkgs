@@ -789,6 +789,11 @@ runTests {
     expr = attrsets.imapAttrs (i: name: value: value + i) {a = 1; b = 2; c = 3;};
     expected = { a = 1; b = 3; c = 5; };
   };
+  testImapAttrsPrime = {
+    expr = attrsets.imapAttrs' (i: name: value: nameValuePair "${name}${toString i}" (value + i))
+             {a = 1; b = 2; c = 3;};
+    expected = { a0 = 1; b1 = 3; c2 = 5; };
+  };
 
   testMergeAttrsListExample1 = {
     expr = attrsets.mergeAttrsList [ { a = 0; b = 1; } { c = 2; d = 3; } ];
