@@ -7,19 +7,19 @@ let
   webappConfig = format.generate "webapp.conf" cfg.webappSettings;
   webserverConfig = format.generate "webserver.conf" cfg.webserverSettings;
 
-  mapsFolder = pkgs.linkFarm "maps"
-    (lib.attrsets.mapAttrs' (name: value:
-      lib.nameValuePair "${name}.conf"
-        (format.generate "${name}.conf" value))
-      cfg.maps);
-
   storageFolder = pkgs.linkFarm "storage"
     (lib.attrsets.mapAttrs' (name: value:
       lib.nameValuePair "${name}.conf"
         (format.generate "${name}.conf" value))
       cfg.storage);
 
-  configFolder = pkgs.linkFarm "bluemap-config" {
+  mapsFolder = pkgs.linkFarm "maps"
+    (lib.attrsets.mapAttrs' (name: value:
+      lib.nameValuePair "${name}.conf"
+        (format.generate "${name}.conf" value.settings))
+      cfg.maps);
+
+  webappConfigFolder = pkgs.linkFarm "bluemap-config" {
     "maps" = mapsFolder;
     "storages" = storageFolder;
     "core.conf" = coreConfig;
@@ -29,6 +29,16 @@ let
     "addons" = pkgs.linkFarmFromDrvs "addons" cfg.addons;
   };
 
+  renderConfigFolder = name: value: pkgs.linkFarm "bluemap-${name}-config" {
+    "maps" = pkgs.linkFarm "maps" {
+      "${name}.conf" = (format.generate "${name}.conf" value.settings);
+    };
+    "storages" = storageFolder;
+    "core.conf" = coreConfig;
+    "webapp.conf" = webappConfig;
+    "webserver.conf" = webserverConfig;
+    "packs" = value.resourcepacks;
+    "addons" = pkgs.linkFarmFromDrvs "addons" cfg.addons;
   };
 
   inherit (lib) mkOption;
@@ -144,22 +154,45 @@ in {
 
     maps = mkOption {
       type = lib.types.attrsOf (lib.types.submodule {
-        freeformType = format.type;
         options = {
-          world = lib.mkOption {
+          resourcepacks = mkOption {
             type = lib.types.path;
-            description = "Path to world folder containing the dimension to render";
+            default = cfg.resourcepacks;
+            defaultText = lib.literalExpression "config.services.bluemap.resourcepacks";
+            description = "A set of resourcepacks/mods to extract models from loaded in alphabetical order";
+          };
+          addons =  mkOption {
+            type = lib.types.listOf lib.types.package;
+            default = cfg.addons;
+            defaultText = lib.literalExpression "config.services.bluemap.addons";
+            description = "Native addons for bluemap";
+          };
+          settings = mkOption {
+            type = (lib.types.submodule {
+              freeformType = format.type;
+              options = {
+                world = mkOption {
+                  type = lib.types.path;
+                  description = "Path to world folder containing the dimension to render";
+                };
+              };
+            });
+            description = ''
+              Settings for files in `maps/`.
+              See the default for an example with good options for the different world types.
+              For valid values [consult upstream docs](https://github.com/BlueMap-Minecraft/BlueMap/blob/master/BlueMapCommon/src/main/resources/de/bluecolored/bluemap/config/maps/map.conf).
+            '';
           };
         };
       });
       default = {
-        "overworld" = {
+        "overworld".settings = {
           world = "${cfg.defaultWorld}";
           ambient-light = 0.1;
           cave-detection-ocean-floor = -5;
         };
 
-        "nether" = {
+        "nether".settings = {
           world = "${cfg.defaultWorld}/DIM-1";
           sorting = 100;
           sky-color = "#290000";
@@ -172,7 +205,7 @@ in {
           max-y = 90;
         };
 
-        "end" = {
+        "end".settings = {
           world = "${cfg.defaultWorld}/DIM1";
           sorting = 200;
           sky-color = "#080010";
@@ -185,13 +218,13 @@ in {
       };
       defaultText = lib.literalExpression ''
         {
-          "overworld" = {
+          "overworld".settings = {
             world = "''${cfg.defaultWorld}";
             ambient-light = 0.1;
             cave-detection-ocean-floor = -5;
           };
 
-          "nether" = {
+          "nether".settings = {
             world = "''${cfg.defaultWorld}/DIM-1";
             sorting = 100;
             sky-color = "#290000";
@@ -204,7 +237,7 @@ in {
             max-y = 90;
           };
 
-          "end" = {
+          "end".settings = {
             world = "''${cfg.defaultWorld}/DIM1";
             sorting = 200;
             sky-color = "#080010";
@@ -291,9 +324,9 @@ in {
         Group = "nginx";
         UMask = "026";
       };
-      script = ''
-        ${lib.getExe pkgs.bluemap} -c ${configFolder} -gs -r
-      '';
+      script = lib.strings.concatStringsSep "\n" ((lib.attrsets.mapAttrsToList
+        (name: value: "${lib.getExe pkgs.bluemap} -c ${renderConfigFolder name value} -r")
+        cfg.maps) ++ [ "${lib.getExe pkgs.bluemap} -c ${webappConfigFolder} -gs" ]);
     };
 
     systemd.timers."render-bluemap-maps" = lib.mkIf cfg.enableRender {
