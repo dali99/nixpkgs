@@ -25,7 +25,10 @@ let
     "core.conf" = coreConfig;
     "webapp.conf" = webappConfig;
     "webserver.conf" = webserverConfig;
-    "resourcepacks" = pkgs.linkFarm "resourcepacks" cfg.resourcepacks;
+    "packs" = cfg.resourcepacks;
+    "addons" = pkgs.linkFarmFromDrvs "addons" cfg.addons;
+  };
+
   };
 
   inherit (lib) mkOption;
@@ -214,10 +217,10 @@ in {
         };
       '';
       description = ''
-        Settings for files in `maps/`.
-        If you define anything here you must define everything yourself.
-        See the default for an example with good options for the different world types.
-        For valid values [consult upstream docs](https://github.com/BlueMap-Minecraft/BlueMap/blob/master/BlueMapCommon/src/main/resources/de/bluecolored/bluemap/config/maps/map.conf).
+        map-specific configuration.
+        These correspond to views in the webapp and are usually
+        different dimension of a world or different render settings of the same dimension.
+        If you set anything in this option you must configure all dimensions yourself!
       '';
     };
 
@@ -252,9 +255,20 @@ in {
     };
 
     resourcepacks = mkOption {
-      type = lib.types.attrsOf lib.types.pathInStore;
-      default = { };
-      description = "A set of resourcepacks to use, loaded in alphabetical order";
+      type = lib.types.path;
+      default = pkgs.linkFarm "resourcepacks" { };
+      description = ''
+        A set of resourcepacks/mods to extract models from loaded in alphabetical order.
+        Can be overriden on a per-map basis with `services.bluemap.maps.<name>.resourcepacks`.
+      '';
+
+    addons = mkOption {
+      type = lib.types.listOf lib.types.package;
+      default = [ ];
+      description = ''
+        A list of native addons for bluemap.
+        Can be overriden on a per-map basis with `services.bluemap.maps.<name>.addons`.
+      '';
     };
   };
 
