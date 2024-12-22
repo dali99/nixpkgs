@@ -13351,6 +13351,8 @@ self: super: with self; {
 
   pyeapi = callPackage ../development/python-modules/pyeapi { };
 
+  pyeasee = callPackage ../development/python-modules/pyeasee { };
+
   pyeverlights = callPackage ../development/python-modules/pyeverlights { };
 
   pyinfra = callPackage ../development/python-modules/pyinfra { };
