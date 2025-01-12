@@ -7881,6 +7881,8 @@ self: super: with self; {
 
   mapclassify = callPackage ../development/python-modules/mapclassify { };
 
+  maplib = callPackage ../development/python-modules/maplib { };
+
   mariadb = callPackage ../development/python-modules/mariadb { };
 
   marimo = callPackage ../development/python-modules/marimo { };
